@@ -2,7 +2,7 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { Tabs } from 'expo-router';
 
 export default function TabLayout() {
@@ -53,7 +53,7 @@ export default function TabLayout() {
             options={{
                 title: 'Treinamento',
                 tabBarIcon: ({ color, focused, }) => (
-                    <FontAwesome6 name={focused ? 'piscina' : 'nadador'} size={24} color={color} />
+                    <FontAwesome5 name={focused ? 'swimming-pool' : 'swimmer'} size={24} color={color} />
                 ),
             }}
           />
