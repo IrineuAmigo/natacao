@@ -1,14 +1,15 @@
 
-import { StyleSheet, View } from "react-native";
+import { ImageSourcePropType, StyleSheet, View } from "react-native";
 
 import Button from '@/components/Button';
+import CircleButton from "@/components/CircleButton";
+import EmojiPicker from "@/components/EmojiPicker";
+import IconButton from "@/components/IconButton";
 import ImageViewer from '@/components/ImageViewer';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from "react";
-import IconButton from "@/components/IconButton";
-import CircleButton from "@/components/CircleButton";
-import EmojiPicker from "@/components/EmojiPicker";
-
+import EmojiSticker from "@/components/EmojiSticker"; 
+import EmojiList from "@/components/EmojiList";
 
 const PlaceholderImage = require('@/assets/images/natacao2.png'); 
 
@@ -17,6 +18,7 @@ export default function Index() {
   const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
   const [showAppOptions, setShowAppOptions] = useState<boolean>(false);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [pickedEmoji, setPickedEmoji] = useState<ImageSourcePropType | undefined>(undefined);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -39,9 +41,7 @@ const onReset = () => {
 };
 
 const onAddSticker = () => {
-  setIsModalVisible
-  // será implementado depois
-  alert('Adicionar sticker');
+  setIsModalVisible(true);
 }
 
 const onModalClose = () => {
@@ -57,7 +57,7 @@ const onSaveImageAsync = async () => {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <ImageViewer imgSource={PlaceholderImage} selectedImage={selectedImage}/>
-        
+        {pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji}/>}
       </View>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
@@ -75,12 +75,14 @@ const onSaveImageAsync = async () => {
         <Button label="Use esta foto" onPress={() => setShowAppOptions(true)} />      
         </View>
       )}  
+
+    <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
+      <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
+    </EmojiPicker>  
+
     </View>
   );
-  
-<EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
-  {/* Aqui serão listados os emojis para escolha, por enquanto só tem um exemplo */}
-</EmojiPicker>  
+}
 
 
 const styles = StyleSheet.create({
@@ -111,5 +113,3 @@ const styles = StyleSheet.create({
     gap: 20,
   },
 });
-
-}
