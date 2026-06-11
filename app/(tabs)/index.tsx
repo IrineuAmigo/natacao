@@ -7,14 +7,28 @@ import EmojiPicker from "@/components/EmojiPicker";
 import IconButton from "@/components/IconButton";
 import ImageViewer from '@/components/ImageViewer';
 import * as ImagePicker from 'expo-image-picker';
-import { useState } from "react";
+import { useRef, useState } from "react";
 import EmojiSticker from "@/components/EmojiSticker"; 
 import EmojiList from "@/components/EmojiList";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import * as MedialLibrary from 'expo-media-library';
+
+import { captureRef } from "react-native-view-shot";
+
+
 
 const PlaceholderImage = require('@/assets/images/natacao2.png'); 
 
 
 export default function Index() {
+  const imageRef = useRef(null);
+
+
+  const [status, requestPermission] = MedialLibrary.usePermissions();
+   if (status === null) {
+    requestPermission();
+  }
+
   const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
   const [showAppOptions, setShowAppOptions] = useState<boolean>(false);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -49,15 +63,30 @@ const onModalClose = () => {
 }
 
 const onSaveImageAsync = async () => {
-  // será implementado depois
-  alert('Salvar imagem');
+  try {
+    const localUri = await captureRef(imageRef, {
+      height: 440,
+      quality: 1,
+    });
+
+    
+    await MedialLibrary.saveToLibraryAsync(localUri);
+    if (localUri) {
+      alert('Imagem salva com sucesso!');
+    }
+  } catch (e) {
+    console.log(e);
+  }
 };
 
+
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       <View style={styles.imageContainer}>
+        <View ref={imageRef} collapsable={false}>
         <ImageViewer imgSource={PlaceholderImage} selectedImage={selectedImage}/>
         {pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji}/>}
+      </View>
       </View>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
@@ -80,7 +109,8 @@ const onSaveImageAsync = async () => {
       <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
     </EmojiPicker>  
 
-    </View>
+    </GestureHandlerRootView>
+
   );
 }
 
